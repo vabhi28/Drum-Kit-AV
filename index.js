@@ -1,5 +1,6 @@
-// Track key presses
-var keyPressCounts = {};
+// Track consecutive key presses
+var consecutiveKey = null;
+var consecutiveCount = 0;
 var numOfButtons = document.querySelectorAll(".drum").length;
 
 // Map each key to a GIF URL and message
@@ -104,17 +105,24 @@ function buttonAnimation(currentKey) {
     }, 100);
 }
 
-// Handle key/button press
+// Handle key/button press for 7 consecutive presses
 function handleKeyPress(key) {
     key = key.toLowerCase();
-    keyPressCounts[key] = (keyPressCounts[key] || 0) + 1;
+
+    if (consecutiveKey === key) {
+        consecutiveCount++;
+    } else {
+        consecutiveKey = key;
+        consecutiveCount = 1;
+    }
 
     makeSound(key);
     buttonAnimation(key);
 
-    if (keyPressCounts[key] === 7) {
+    if (consecutiveCount === 7) {
         showPopup(key);
-        keyPressCounts[key] = 0; // reset counter
+        consecutiveCount = 0;
+        consecutiveKey = null;
     }
 }
 
@@ -130,7 +138,3 @@ for (var i = 0; i < numOfButtons; i++) {
 document.addEventListener("keydown", function (event) {
     handleKeyPress(event.key);
 });
-
-
-
-// https://media1.tenor.com/m/7kpLxISMN_YAAAAC/funny-dance-aaku-bhai.gif
